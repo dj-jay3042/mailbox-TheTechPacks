@@ -31,6 +31,8 @@
     <link rel="stylesheet" href="/plugins/summernote/summernote-bs4.min.css">
     <!-- summernote -->
     <link rel="stylesheet" href="../../plugins/summernote/summernote-bs4.min.css">
+    <!-- page level css -->
+    @yield('css')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed dark-mode layout-footer-fixed layout-navbar-fixed">
@@ -94,12 +96,11 @@
         <!-- /.navbar -->
 
         <!-- Main Sidebar Container -->
-        <aside class="main-sidebar main-sidebar-custom sidebar-dark-primary elevation-4">
+        <aside class="main-sidebar main-sidebar-custom sidebar-dark-primary elevation-1">
             <!-- Brand Logo -->
-            <a href="index3.html" class="brand-link">
-                <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            <a href="/" class="brand-link">
+                <img src="/dist/img/logo-light.png" alt="The Tech Packs Logo" class="brand-image"
                     style="opacity: .8">
-                <span class="brand-text font-weight-light">The Tech Packs</span>
             </a>
 
             <!-- Sidebar -->
@@ -107,7 +108,7 @@
                 <!-- Sidebar user panel (optional) -->
                 <div class="user-panel mt-3 pb-3 mb-3 d-flex">
                     <div class="image">
-                        <img src="dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+                        <img src="/dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
                     </div>
                     <div class="info">
                         <a href="#" class="d-block">Jay Chauhan</a>
@@ -159,10 +160,6 @@
                             </a>
                         </li>
                         <br><br>
-                        {{-- <li class="nav-item bottom">
-                            <a href="/compose" class="btn btn-info btn-block mb-3 nav-link">Compose <i
-                                    class="nav-icon fas fa-plus"></i></a>
-                        </li> --}}
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->
@@ -186,7 +183,7 @@
                         </div><!-- /.col -->
                         <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
-                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="/">Home</a></li>
                                 <li class="breadcrumb-item active">@yield('pageTitle')</li>
                             </ol>
                         </div><!-- /.col -->
@@ -248,23 +245,15 @@
     <script src="/plugins/daterangepicker/daterangepicker.js"></script>
     <!-- Tempusdominus Bootstrap 4 -->
     <script src="/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    <!-- Summernote -->
-    <script src="/plugins/summernote/summernote-bs4.min.js"></script>
     <!-- overlayScrollbars -->
     <script src="/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
     <!-- AdminLTE App -->
     <script src="/dist/js/adminlte.js"></script>
     <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
     <script src="/dist/js/pages/dashboard.js"></script>
-    <!-- Summernote -->
-    <script src="/plugins/summernote/summernote-bs4.min.js"></script>
-    <script>
-        $(function () {
-          //Add text editor
-          $('#compose-textarea').summernote()
-        })
-    </script>
-      
+
+    <!-- page level scripts -->
+    @yield('script')      
 </body>
 
 </html>

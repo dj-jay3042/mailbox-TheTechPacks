@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\GeneralMail;
 use App\Models\Mails;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Webklex\IMAP\Facades\Client;
 
@@ -11,25 +14,29 @@ class MailController extends BaseController
 {
     public function loadInbox()
     {
-        if (Session::has('user'))
-            return view('inbox');
-        else
+        if (Session::has('user')) {
+            $mailData = Mails::select("mailId", "mailFromEmail", "mailFromName", "mailSubject", "mailTime")->where("mailType", "0")->where("mailIsDeleted", "0")->get();
+
+            return view('inbox', compact("mailData"));
+        } else
             return redirect()->route('login');
     }
 
     public function loadMail($mailId)
     {
         if (Session::has('user'))
-            return view('mail');
+            return view('mail', compact("mailId"));
         else
             return redirect()->route('login');
     }
 
     public function loadOutbox()
     {
-        if (Session::has('user'))
-            return view('sent');
-        else
+        if (Session::has('user')) {
+            $mailData = Mails::select("mailId", "mailFromEmail", "mailFromName", "mailSubject", "mailTime")->where("mailType", "1")->where("mailIsDeleted", "0")->get();
+
+            return view('sent', compact("mailData"));
+        } else
             return redirect()->route('login');
     }
 
@@ -76,5 +83,32 @@ class MailController extends BaseController
         $client->disconnect();
 
         return response()->json(['message' => 'Emails retrieved successfully.']);
+    }
+
+    public function sendMail(Request $request)
+    {
+        $toEmail = $request->input("toEmail");
+        $toName = $request->input("toName");
+        $mailSubject = $request->input("mailSubject");
+        $mailBody = $request->input("mailBody");
+
+        $customData = array(
+            "subject" => $mailSubject,
+            "referrer" => "Dear",
+            "name" => $toName,
+            "toEmail" => $toEmail,
+            "fromEmail" => session("user")->userEmail,
+            "fromName" => session("user")->userFirstName . " " . session("user")->userLastName . " | The Tech Packs",
+            "body" => $mailBody,
+        );
+        // return view('emails.general', compact("customData"));
+        Mail::to($toEmail)->send(new GeneralMail($customData));
+
+        return redirect()->route('outbox')->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+
+    public function loadMailBody($mailId) {
+        $body = Mails::select("mailContent")->where("mailId", $mailId)->get();
+        return view('mailBody', compact("body"));
     }
 }

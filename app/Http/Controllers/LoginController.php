@@ -16,10 +16,10 @@ class LoginController extends BaseController
 
     public function login(Request $request)
     {
-        $email = $request->input("email");
+        $username = $request->input("username");
         $password = $request->input("password");
 
-        $userData = User::where("userName", $email)->get();
+        $userData = User::where("userName", $username)->get();
 
         if ($userData[0]) {
             if ($userData[0]->userPassword == hash("sha512", $password)) {

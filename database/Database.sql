@@ -1,5 +1,3 @@
-DROP TABLE tblAttachment;
-DROP TABLE tblMails;
 CREATE TABLE tblMails (
     mailId int primary key AUTO_INCREMENT,
     mailToEmail varchar(1024) not null,
@@ -29,7 +27,7 @@ CREATE TABLE tblUserRole (
     userRoleDescription varchar(255) not null,
     userRoleMailReadAccess char(1) not null,
     userRoleMailSendAccess char(1) not null,
-    userIsDeleted char(1) not null default '0'
+    userRoleIsDeleted char(1) not null default '0'
 );
 
 CREATE TABLE tblUser (
@@ -42,5 +40,10 @@ CREATE TABLE tblUser (
     userPhone char(10) not null,
     userRole int not null,
     FOREIGN KEY (userRole) REFERENCES tblUserRole (userRoleId),
+    userIsEmailVerified char(1) not null default '0',
+    userIsContactNumberVerified char(1) not null default '0',
     userIsDeleted char(1) not null default '0'
 );
+
+INSERT INTO tblUserRole (userRoleName, userRoleDescription, userRoleMailReadAccess, userRoleMailSendAccess, userRoleIsDeleted) VALUES ('admin', 'System Admin', '1', '1', '0');
+INSERT INTO tblUser (userFirstName,userLastName,userName,userPassword,userEmail,userPhone,userRole,userIsEmailVerified,userIsContactNumberVerified,userIsDeleted) VALUES ('Jay', 'Chauhan', 'admin_jay', 'fcd99081360cc7ac32aa752097931b57537a0bf4026ac923953e0039e821a3872cc492d1e15fe68b7f78fa2dce94648687445d6ee15d2f3766d62d9bc2af173c', 'contact@dj-jay.in', '9313440532', 1, '1', '1', '0');
