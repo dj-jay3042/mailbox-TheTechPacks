@@ -105,7 +105,7 @@
                                                     <label for="check1"></label>
                                                 </div>
                                             </td>
-                                            <td class="mailbox-star"><i class="fas fa-envelope{{ ($mail->mailIsRead == "0") ? "-open" : "" }}"></i></td>
+                                            <td class="mailbox-star"><i class="fas fa-envelope{{ ($mail->mailIsRead != "0") ? "-open" : "" }}"></i></td>
                                             <td class="mailbox-name">{{ $mail->mailFromName }}</td>
                                             <td class="mailbox-subject">
                                                 @if ($mail->mailIsRead != "0")
