@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="../../plugins/summernote/summernote-bs4.min.css">
     <!-- page level css -->
     @yield('css')
+    @yield('add-css')
 </head>
 
 <body class="hold-transition sidebar-mini layout-fixed dark-mode layout-footer-fixed layout-navbar-fixed">

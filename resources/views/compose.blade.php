@@ -4,8 +4,8 @@
     <!-- /.col -->
     <div class="col-md-12">
         <form action="/mail/send" method="post">
-          @csrf
-          @method("POST")
+            @csrf
+            @method('POST')
             <div class="card card-primary card-outline">
                 <div class="card-header">
                     <h3 class="card-title">Compose New Message</h3>
@@ -15,8 +15,13 @@
                     <div class="form-group">
                         <input class="form-control" name="toEmail" placeholder="To:">
                     </div>
-                    <div class="form-group">
-                        <input class="form-control" name="toName" placeholder="Name:">
+                    <div class="row">
+                        <div class="form-group col-md-3">
+                            <input class="form-control" name="toAdjective" placeholder="Dear / Respected">
+                        </div>
+                        <div class="form-group col-md-9">
+                            <input class="form-control" name="toName" placeholder="Name:">
+                        </div>
                     </div>
                     <div class="form-group">
                         <input class="form-control" name="mailSubject" placeholder="Subject:">

@@ -7,6 +7,23 @@
     <link rel="stylesheet" href="/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 @endsection
 
+@section('add-css')
+    <style>
+        body,
+        html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .wrapper {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        /* Add your additional CSS styles here */
+    </style>
+@endsection
+
 @section('pageTitle')
     Inbox
 @endsection
@@ -56,26 +73,29 @@
                                 </button>
                             </div>
                             <!-- /.btn-group -->
-                            <button type="button" class="btn btn-default btn-sm">
+                            <button type="button" class="btn btn-default btn-sm" onclick="location.reload();">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
                             <div class="float-right">
-                                1-50/200
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-sm">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </button>
+                                <div class="row">
+                                    <div class="count">
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm prev-btn">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm next-btn">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- /.btn-group -->
                             </div>
                             <!-- /.float-right -->
                         </div>
 
-                        <div class="table-responsive mailbox-messages card-body p-0" style="height: 62vh;">
-                            <table class="table table-hover table-striped table-head-fixed text-nowrap" id="example2">
+                        <div class="table-responsive mailbox-messages card-body p-0" style="height: 60vh;">
+                            <table class="table table-hover table-striped table-head-fixed text-nowrap" id="tblMails">
                                 <tbody>
                                     @foreach ($mailData as $mail)
                                         <tr onclick="window.location.href='/mail/{{ $mail->mailId }}'">
@@ -85,9 +105,14 @@
                                                     <label for="check1"></label>
                                                 </div>
                                             </td>
-                                            <td class="mailbox-star"></td>
+                                            <td class="mailbox-star"><i class="fas fa-envelope{{ ($mail->mailIsRead == "0") ? "-open" : "" }}"></i></td>
                                             <td class="mailbox-name">{{ $mail->mailFromName }}</td>
-                                            <td class="mailbox-subject"><b>{{ $mail->mailSubject }}</b>
+                                            <td class="mailbox-subject">
+                                                @if ($mail->mailIsRead != "0")
+                                                    {{ $mail->mailSubject }}
+                                                @else
+                                                    <b> {{ $mail->mailSubject }} </b>                                                    
+                                                @endif
                                             </td>
                                             <td class="mailbox-attachment"></td>
                                             <td class="mailbox-date">{{ date('d M, Y h:i a', strtotime($mail->mailTime)) }}
@@ -119,18 +144,21 @@
                                 </button>
                             </div>
                             <!-- /.btn-group -->
-                            <button type="button" class="btn btn-default btn-sm">
+                            <button type="button" class="btn btn-default btn-sm" onclick="location.reload();">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
                             <div class="float-right">
-                                1-50/200
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-default btn-sm">
-                                        <i class="fas fa-chevron-left"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-default btn-sm">
-                                        <i class="fas fa-chevron-right"></i>
-                                    </button>
+                                <div class="row">
+                                    <div class="count">
+                                    </div>&nbsp;&nbsp;&nbsp;
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm prev-btn">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default btn-sm next-btn">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <!-- /.btn-group -->
                             </div>
@@ -148,36 +176,70 @@
 @endsection
 
 @section('script')
-    <!-- DataTables  & Plugins -->
-    <script src="/plugins/datatables/jquery.dataTables.min.js"></script>
-    <script src="/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
-    <script src="/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
-    <script src="/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="/plugins/jszip/jszip.min.js"></script>
-    <script src="/plugins/pdfmake/pdfmake.min.js"></script>
-    <script src="/plugins/pdfmake/vfs_fonts.js"></script>
-    <script src="/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="/plugins/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+    <!-- Google Apis JQuery CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Pagination Script -->
     <script>
-        $(function() {
-            $("#example1").DataTable({
-                "responsive": true,
-                "lengthChange": false,
-                "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
+        $(document).ready(function() {
+            // Define number of rows per page and get total number of rows
+            var rowsPerPage = 8; // Change this to the desired number of rows per page
+            var totalRows = $('#tblMails tbody tr').length;
+
+            // Calculate total number of pages
+            var totalPages = Math.ceil(totalRows / rowsPerPage);
+
+            // Show the first page by default
+            var currentPage = 1;
+            showPage(currentPage);
+
+            // Handle "Previous" button click
+            $('.prev-btn').click(function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    showPage(currentPage);
+                }
             });
+
+            // Handle "Next" button click
+            $('.next-btn').click(function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    showPage(currentPage);
+                }
+            });
+
+            // Function to display the specified page
+            function showPage(pageNum) {
+                // Hide all rows
+                $('#tblMails tbody tr').hide();
+
+                // Calculate start and end row index for the current page
+                var startIndex = (pageNum - 1) * rowsPerPage;
+                var endIndex = startIndex + rowsPerPage;
+
+                // Show rows for the current page
+                $('#tblMails tbody tr').slice(startIndex, endIndex).show();
+
+                // Update page count
+                var pageStart = (startIndex + 1);
+                var pageEnd = Math.min(startIndex + rowsPerPage, totalRows);
+                $('.count').text(pageStart + '-' + pageEnd + ' / ' + totalRows);
+
+                // Disable "Previous" button if on the first page, otherwise enable it
+                if (pageNum === 1) {
+                    $('.prev-btn').prop('disabled', true);
+                } else {
+                    $('.prev-btn').prop('disabled', false);
+                }
+
+                // Disable "Next" button if on the last page, otherwise enable it
+                if (pageNum === totalPages) {
+                    $('.next-btn').prop('disabled', true);
+                } else {
+                    $('.next-btn').prop('disabled', false);
+                }
+            }
+
         });
     </script>
 @endsection

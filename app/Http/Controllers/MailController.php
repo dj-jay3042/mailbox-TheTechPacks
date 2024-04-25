@@ -15,7 +15,7 @@ class MailController extends BaseController
     public function loadInbox()
     {
         if (Session::has('user')) {
-            $mailData = Mails::select("mailId", "mailFromEmail", "mailFromName", "mailSubject", "mailTime")->where("mailType", "0")->where("mailIsDeleted", "0")->get();
+            $mailData = Mails::select("mailId", "mailFromEmail", "mailFromName", "mailSubject", "mailTime", "mailIsRead")->where("mailType", "0")->where("mailIsDeleted", "0")->orderBy("mailTime", "DESC")->get();
 
             return view('inbox', compact("mailData"));
         } else
@@ -24,16 +24,18 @@ class MailController extends BaseController
 
     public function loadMail($mailId)
     {
-        if (Session::has('user'))
-            return view('mail', compact("mailId"));
-        else
+        if (Session::has('user')) {
+            Mails::where("mailId", $mailId)->update(["mailIsRead" => '1']);
+            $mailData = Mails::select("mailId", "mailFromEmail", "mailFromName", "mailToName", "mailToEmail", "mailSubject", "mailTime", "mailIsRead", "mailType")->where("mailId", $mailId)->get();
+            return view('mail', compact("mailData"));
+        } else
             return redirect()->route('login');
     }
 
     public function loadOutbox()
     {
         if (Session::has('user')) {
-            $mailData = Mails::select("mailId", "mailFromEmail", "mailFromName", "mailSubject", "mailTime")->where("mailType", "1")->where("mailIsDeleted", "0")->get();
+            $mailData = Mails::select("mailId", "mailFromEmail", "mailFromName", "mailSubject", "mailTime", "mailIsRead")->where("mailType", "1")->where("mailIsDeleted", "0")->orderBy("mailTime", "DESC")->get();
 
             return view('sent', compact("mailData"));
         } else
@@ -94,21 +96,34 @@ class MailController extends BaseController
 
         $customData = array(
             "subject" => $mailSubject,
-            "referrer" => "Dear",
+            "adjective" => "Dear",
             "name" => $toName,
             "toEmail" => $toEmail,
             "fromEmail" => session("user")->userEmail,
             "fromName" => session("user")->userFirstName . " " . session("user")->userLastName . " | The Tech Packs",
             "body" => $mailBody,
         );
-        // return view('emails.general', compact("customData"));
         Mail::to($toEmail)->send(new GeneralMail($customData));
 
         return redirect()->route('outbox')->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
 
-    public function loadMailBody($mailId) {
-        $body = Mails::select("mailContent")->where("mailId", $mailId)->get();
-        return view('mailBody', compact("body"));
+    public function loadMailBody($mailId)
+    {
+        $body = Mails::select("mailContent", "mailType", "mailToName", "mailToEmail", "mailFromName", "mailFromEmail", "mailSubject", "mailTime")->where("mailId", $mailId)->get();
+        if ($body[0]->mailType == "0")
+            return view('mailBody', compact("body"));
+        else {
+            $data = array(
+                "subject" => $body[0]->mailSubject,
+                "adjective" => "Dear",
+                "name" => $body[0]->mailToName,
+                "toEmail" => $body[0]->mailToEmail,
+                "fromEmail" => session("user")->userEmail,
+                "fromName" => session("user")->userFirstName . " " . session("user")->userLastName . " | The Tech Packs",
+                "body" => $body[0]->mailContent,
+            );
+            return view('emails.general', compact("data"));
+        }
     }
 }

@@ -9,9 +9,10 @@
         <!-- /.card-header -->
         <div class="card-body">
             <div class="mailbox-read-info">
-                <h5>Message Subject Is Placed Here</h5>
-                <h6>From: support@adminlte.io
-                    <span class="mailbox-read-time float-right">15 Feb. 2015 11:03 PM</span>
+                <h5>{{ $mailData[0]->mailSubject }}</h5><br>
+                <h6>{{ ($mailData[0]->mailType != "1") ? "Email: " . $mailData[0]->mailFromEmail : "Email: " . $mailData[0]->mailToEmail }}<br>
+                {{ ($mailData[0]->mailType != "1") ? "Name: " . $mailData[0]->mailFromName : "Name: " . $mailData[0]->mailToName }}
+                    <span class="mailbox-read-time float-right">{{ date("d M, Y h:i A", strtotime($mailData[0]->mailTime)) }}</span>
                 </h6>
             </div>
             <!-- /.mailbox-read-info -->
@@ -34,7 +35,7 @@
             </div>
             <!-- /.mailbox-controls -->
             <div class="mailbox-read-message">
-                <iframe src="/mail/body/{{ $mailId }}" frameborder="0" width="100%" style="height: 62vh"></iframe>
+                <iframe src="/mail/body/{{ $mailData[0]->mailId }}" frameborder="0" width="100%" style="height: 62vh"></iframe>
             </div>
             <!-- /.mailbox-read-message -->
         </div>
