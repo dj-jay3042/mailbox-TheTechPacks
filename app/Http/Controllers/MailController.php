@@ -89,10 +89,11 @@ class MailController extends BaseController
 
     public function sendMail(Request $request)
     {
-        $toEmail = $request->input("toEmail");
+        $toEmail = explode(",", str_replace(" ", "", $request->input("toEmail")));
         $toName = $request->input("toName");
         $mailSubject = $request->input("mailSubject");
         $mailBody = $request->input("mailBody");
+
 
         $customData = array(
             "subject" => $mailSubject,
@@ -103,7 +104,7 @@ class MailController extends BaseController
             "fromName" => session("user")->userFirstName . " " . session("user")->userLastName . " | The Tech Packs",
             "body" => $mailBody,
         );
-        Mail::to($toEmail)->send(new GeneralMail($customData));
+        Mail::to($toEmail)->from(session("user")->userEmail, session("user")->userFirstName , " " . session("user")->userLastName)->send(new GeneralMail($customData));
 
         return redirect()->route('outbox')->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }
