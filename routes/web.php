@@ -6,7 +6,10 @@ use App\Http\Controllers\MailController;
 
 // Dashboard Route
 Route::get('/', function () {
-    return view('index');
+    if (Session::has('user'))
+        return view('index');
+    else
+        return redirect()->route('login');
 });
 
 // Login Routes
