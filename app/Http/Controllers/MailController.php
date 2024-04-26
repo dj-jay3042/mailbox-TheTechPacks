@@ -93,18 +93,19 @@ class MailController extends BaseController
         $toName = $request->input("toName");
         $mailSubject = $request->input("mailSubject");
         $mailBody = $request->input("mailBody");
+        $toAdjective = $request->input("toAdjective");
 
 
         $customData = array(
             "subject" => $mailSubject,
-            "adjective" => "Dear",
+            "adjective" => $toAdjective,
             "name" => $toName,
             "toEmail" => $toEmail,
             "fromEmail" => session("user")->userEmail,
             "fromName" => session("user")->userFirstName . " " . session("user")->userLastName . " | The Tech Packs",
             "body" => $mailBody,
         );
-        Mail::to($toEmail)->from(session("user")->userEmail, session("user")->userFirstName , " " . session("user")->userLastName)->send(new GeneralMail($customData));
+        Mail::to($toEmail)->send(new GeneralMail($customData));
 
         return redirect()->route('outbox')->header('Cache-Control', 'no-cache, no-store, must-revalidate');
     }

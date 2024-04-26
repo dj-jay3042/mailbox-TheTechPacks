@@ -17,7 +17,7 @@ class GeneralMail extends Mailable
     public function build()
     {
         $insertData = array(
-            "mailToEmail" => $this->data["toEmail"],
+            "mailToEmail" => implode(",", $this->data["toEmail"]),
             "mailToName" => $this->data["name"],
             "mailFromName"=> $this->data["fromName"],
             "mailFromEmail"=> $this->data["fromEmail"],
